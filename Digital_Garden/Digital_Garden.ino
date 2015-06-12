@@ -2,6 +2,7 @@
 #include <dht.h> //Libreria sensori umidità e temperatura
 #include "RTClib.h"//Libreria RTC
 #include <SoftwareSerial.h> //Libreria Software Seriale
+//#include <floatToString.h>
 
 //PIN
 #define soilMoisture_PIN A0
