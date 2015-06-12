@@ -1,6 +1,6 @@
-void RTCSetup(){
+void RTCSetup() {
   //RTC INIZIO
- #ifdef AVR
+#ifdef AVR
   Wire.begin();
 #else
   Wire1.begin(); // Shield I2C pins connect to alt I2C bus on Arduino Due
@@ -9,23 +9,23 @@ void RTCSetup(){
 
   if (! rtc.isrunning()) {
     Serial.println("RTC is NOT running!");
-    errors*=10;
-    errors+=5; 
+    errors *= 10;
+    errors += 5;
     // following line sets the RTC to the date & time this sketch was compiled
     rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
     // January 21, 2014 at 3am you would call:
-     //rtc.adjust(DateTime(2015, 6, 6, 3, 30, 0));
+    //rtc.adjust(DateTime(2015, 6, 6, 3, 30, 0));
   }
- //RTC FINE
+  //RTC FINE
 }
 
 
 
 
 
-void lcdSetup(){
-  
+void lcdSetup() {
+
   pinMode(gndPin, OUTPUT);
 
   digitalWrite(gndPin, LOW);
@@ -76,7 +76,7 @@ void lcd_cmd(byte x) {
 
 }
 
- 
+
 
 void lcd_contdata(byte x) {
 
@@ -86,7 +86,7 @@ void lcd_contdata(byte x) {
 
 }
 
- 
+
 
 void lcd_lastdata(byte x) {
 
@@ -96,7 +96,7 @@ void lcd_lastdata(byte x) {
 
 }
 
- 
+
 
 // Show the string.
 
@@ -124,7 +124,7 @@ void lcd_printStr(const char *s) {
 
 }
 
- 
+
 
 // Set the character location.
 
