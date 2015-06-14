@@ -112,10 +112,6 @@ void setup()
 
 void loop ()
 {
-  //Serial.println("Loop start");
-  if (debugging) {
-    SerialComm();
-  }
   if (errors > 0) {
     digitalWrite(13, HIGH);
   }
@@ -124,10 +120,13 @@ void loop ()
   lcdVisualization();
   waterControl();
   //delay(1000);
-  if ((millis() / 1000 - lastCommunication) >= 600) { //Comunica i dati una volta ogni 10 minuti
+  if ((millis() / 1000 - lastCommunication) >= 10) { //Comunica i dati una volta ogni 10 minuti
     communication();
+    if (debugging) {
+      SerialComm();
+    }
+    lastCommunication = millis() / 1000;
   }
-
 }
 
 void readSensors() {
@@ -285,9 +284,17 @@ void stopWatering() {
 
 
 void SerialComm() {
-  s = "Litres: " + String(litreValue) + " Soil: " + String(soilMoistureValue) + " Rain: " + String(rainValue) + " Temp: " + String(tempValue) + " Humid: " + String(humidValue) + " Water: " + String(isWatering) + " Errors: " + String(errors) + " Alarm1: " + String(secondsAlarm1) + " Alarm2: " + String(secondsAlarm2);
+  s = String(hourNow).substring(0, 2) + ":" + String(minuteNow);
+  s += " Litres: " + String(litreValue);
+  s += " Soil: " + String(soilMoistureValue);
+  s += " Rain: " + String(rainValue);
+  s += " Temp: " + String(tempValue);
+  s += " Humid: " + String(humidValue);
+  s += " Water: " + String(isWatering);
+  s += " Errors: " + String(errors);
+  s += " Alarm1: " + String(secondsAlarm1);
+  s += " Alarm2: " + String(secondsAlarm2);
   Serial.println(s);
-  Serial.println(millis());
 
 
 }

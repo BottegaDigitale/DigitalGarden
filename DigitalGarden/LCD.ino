@@ -85,13 +85,15 @@ void lcdVisualization() {
 
         lcd_setCursor(0, 1);
         // lcd_printStr(timeTo1); float??*/
-        if (water1) {
+  if (!water1 && !water2){
+    lcd_setCursor(0, 1);
+          lcd_printStr("noW1or2");
+  }else if (water1 && !water2) {
           lcd_setCursor(0, 1);
           lcd_printStr("W1 done");
-        }
-        if (water2) {
+        }else if (water1 && water2) {
           lcd_setCursor(0, 1);
-          lcd_printStr("W2 done");
+          lcd_printStr("W12 done");
         }
 
         // lcd_setCursor(6, 1);
@@ -102,6 +104,9 @@ void lcdVisualization() {
         if (isWatering) {
           lcd_setCursor(0, 1);
           lcd_printStr("WATERING");
+        }else{
+        lcd_setCursor(0, 1);
+          lcd_printStr("Watngoff");
         }
         break;
       case 7:
