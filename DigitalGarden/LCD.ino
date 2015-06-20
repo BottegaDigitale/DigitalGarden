@@ -5,7 +5,7 @@ void lcdVisualization() {
   if (hourNow > 100) {
     add = 1;
   }
-  if (millis() - lastLCD >= 2000) {
+  if ((millis()/1000) - lastLCD >= 2) {
     lcd_setCursor(1, 0);
 
     lcd_printStr(floatToString(buffer2, hourNow, 0));
@@ -22,7 +22,7 @@ void lcdVisualization() {
     lcd_printStr(" ");
 
 
-    lastLCD = millis();
+    lastLCD = millis()/1000;
     String timeToWater = "";
 
     lcd_setCursor(0, 1);

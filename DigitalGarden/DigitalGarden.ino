@@ -41,27 +41,29 @@ long deltaTimeFlow = 0;
 DateTime timeNow;
 float hourNow = 0;
 int minuteNow = 0;
-int hourAlarm1 = 0;
-int minAlarm1 = 0;
-int hourAlarm2 = 0;
-int minAlarm2 = 0;
-
 long secondsNow = 0;
-long secondsAlarm1 = 0;
-long secondsAlarm2 = 1191;
 
-long waterBegin = 0;
-long lastRead = 0;
-long lastLCD = 0;
+//Alarm 1
+int minutesAlarm1 = 480;
 
-long lastCommunication = 0;
+//Alarm 2
+int minutesAlarm2 = 1260;
+
+// Watering Duration
+int duration = 15; //2 minuti
+
+long waterBegin = 0; //water beginning in seconds
+
+long lastRead = 0; // last sensor reading in seconds
+long lastLCD = 0; //last sensor reading in seconds
+long lastCommunication = 0; // last communication in seconds
 
 boolean debugging = true;
 boolean water1 = false;
 boolean water2 = false;
 boolean isWatering = false;
 
-int duration = 2; //2 minuti
+
 
 int maxSoil = 800;
 int maxRain = 600;
@@ -97,11 +99,10 @@ void setup()
 
   lcdSetup();
 
-  //Set Alarm
-  setAlarm(540, 1); //9 mattina
-  setAlarm(1202, 2); //9 di sera
-  // Alarm.alarmRepeat(hourAlarm1,minAlarm1,0, MorningAlarm);  // 8:30am every day
-  //Alarm.alarmRepeat(hourAlarm2,minAlarm2,0, EveningAlarm);  // 8:30am every day
+  /*Get Alarm value from Eeprom
+  getAlarms();  //(TO DO)
+  */
+
   interrupts();
   Serial.println("-------------------------> Restarted");
 }
@@ -120,7 +121,7 @@ void loop ()
   lcdVisualization();
   waterControl();
   //delay(1000);
-  if ((millis() / 1000 - lastCommunication) >= 10) { //Comunica i dati una volta ogni 10 minuti
+  if ((millis() / 1000 - lastCommunication) >= 5) { //Comunica i dati una volta ogni 10 minuti
     communication();
     if (debugging) {
       SerialComm();
@@ -241,30 +242,37 @@ void readAM2301(int am2301) { //Lettura e visualizzazione dati sensore temperatu
 
 
 
-void setAlarm(long seconds, int alarm) {
+void setAlarm(long minutes, int alarm) {
   if (alarm == 1) {
-    secondsAlarm1 = seconds;
+    minutesAlarm1 = minutes;
+    //Set in Eprom
   } else if (alarm == 2) {
-    secondsAlarm2 = seconds;
+    minutesAlarm2 = minutes;
+    ///Set in Eprom
   }
 }
 
 
 boolean waterControl() {
+  int minutes = minuteNow + hourNow * 60;
   if (soilMoistureValue < maxSoil) {
-    if ((secondsNow >= secondsAlarm1) && (secondsNow <= (secondsAlarm1 + duration))) {
+    if ((minutes >= minutesAlarm1) && (minutes <= (minutesAlarm1 + duration))) {
       watering();
       water1 = true;
     }
-    else if ((secondsNow >= secondsAlarm2) && (secondsNow <= (secondsAlarm2 + duration))) {
+    else if ((minutes >= minutesAlarm2) && (minutes <= (minutesAlarm2 + duration))) {
       watering();
       water2 = true;
-
+    } else {
+      water1 = false;
+      water2 = false;
+      stopWatering();
     }
+  } else {
+    water1 = false;
+    water2 = false;
+    stopWatering();
   }
-  else stopWatering();
-
-
 }
 
 void watering() {
@@ -292,8 +300,8 @@ void SerialComm() {
   s += " Humid: " + String(humidValue);
   s += " Water: " + String(isWatering);
   s += " Errors: " + String(errors);
-  s += " Alarm1: " + String(secondsAlarm1);
-  s += " Alarm2: " + String(secondsAlarm2);
+  s += " Alarm1: " + String(minutesAlarm1 / 60) + ":" + String(minutesAlarm1 % 60);
+  s += " Alarm2: " + String(minutesAlarm2 / 60) + ":" + String(minutesAlarm2 % 60);
   Serial.println(s);
 
 
